@@ -67,7 +67,7 @@ RUN echo y | android update sdk --no-ui --all --filter build-tools-21.1.2 | grep
 # Android System Images, for emulators
 # Please keep these in descending order!
 RUN echo y | android update sdk --no-ui --all --filter sys-img-armeabi-v7a-android-24 | grep 'package installed'
-
+RUN echo y | android update sdk --no-ui --all --filter sys-img-armeabi-v7a-android-21 | grep 'package installed'
 
 # Extras
 RUN echo y | android update sdk --no-ui --all --filter extra-android-m2repository | grep 'package installed'
