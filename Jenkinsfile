@@ -4,24 +4,23 @@ node('linuxee-docker') {
    def imageName="jenkins-android-docker-slave"
    def image
    def options="--restart=always --name $containerName -v /var/run/docker.sock:/var/run/docker.sock"
-   def args
    withCredentials([string(credentialsId: 'jenkins-slave-secret', variable: 'key'), string(credentialsId: 'jenkins-slave-register-url', variable: 'url'), string(credentialsId: 'jenkins-slave-tunnel', variable: 'tunnel')]) {
-     args="-headless -tunnel $tunnel -url $url $key $containerName"
-   }
-    
-   stage('Stop and remove container') {
-    sh "docker stop $containerName || echo $containerName is not running"
-   }
+     def args="-headless -tunnel $tunnel -url $url $key $containerName"
+       
+     stage('Stop and remove container') {
+       sh "docker stop $containerName || echo $containerName is not running"
+     }
    
-   stage('Remove container') {
-    sh "docker rm $containerName || echo $containerName has been already removed"
-   }
+     stage('Remove container') {
+      sh "docker rm $containerName || echo $containerName has been already removed"
+     }
    
-   stage('Build image') {
-     image = docker.build("$imageName")
-   }
+     stage('Build image') {
+       image = docker.build("$imageName")
+     }
    
-   stage('Run container') {
-    image.run("$options","$args")
+     stage('Run container') {
+      image.run("$options","$args")
+     }
    }
 }
