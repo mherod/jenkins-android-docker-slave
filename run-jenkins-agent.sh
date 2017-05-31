@@ -1,6 +1,6 @@
 #!/bin/bash
-container="linuxee-docker-android"
-image="jenkins-android-docker-slave"
+container="android-docker-agent"
+image="jenkins-android-docker-agent"
 jenkinsDiscovery="jenkins.example.com:50000"
 jenkinsUrl="http://jenkins-ui.example.com"
 secretToken="longsecretalphanumericaltokenfromjenkins"
