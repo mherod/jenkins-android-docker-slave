@@ -5,7 +5,7 @@ jenkinsDiscovery="jenkins.example.com:50000"
 jenkinsUrl="http://jenkins-ui.example.com"
 secretToken="longsecretalphanumericaltokenfromjenkins"
 
-docker build -t $image https://raw.githubusercontent.com/AckeeDevOps/jenkins-android-docker-slave/master/Dockerfile
+docker build --no-cache -t $image https://raw.githubusercontent.com/AckeeDevOps/jenkins-android-docker-slave/master/Dockerfile
 docker stop $container
 docker rm $container
 docker -- run --restart=always -d \
