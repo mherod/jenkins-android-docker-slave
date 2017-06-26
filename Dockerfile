@@ -20,10 +20,9 @@ RUN dpkg --add-architecture i386 && \
 
 # ------------------------------------------------------
 # --- Download Android SDK tools into $ANDROID_HOME
-
-RUN cd /opt && wget -q https://dl.google.com/android/android-sdk_r24.4.1-linux.tgz -O android-sdk.tgz && \
-    tar -xvzf android-sdk.tgz && \
-    rm -f android-sdk.tgz
+RUN cd /opt && wget -q https://dl.google.com/android/repository/tools_r25.2.4-linux.zip -O android-sdk-tools.zip && \
+    unzip -q android-sdk-tools.zip && mkdir -p ${ANDROID_HOME} && mv tools/ ${ANDROID_HOME}/tools/ && \
+    rm -f android-sdk-tools.zip
 
 ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
 
@@ -126,3 +125,4 @@ RUN usermod -d /root jenkins && chown -R jenkins:root /root && \
 
 ENV BITRISE_DOCKER_REV_NUMBER_ANDROID v2016_10_20_1
 CMD bitrise -version
+RUN echo y | ${ANDROID_HOME}/tools/bin/sdkmanager --update | grep done
