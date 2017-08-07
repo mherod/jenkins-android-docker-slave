@@ -93,7 +93,7 @@ RUN apt-get update && \
 # ------------------------------------------------------
 # --- Install Maven 3 from PPA
 
-RUN apt-get -y purge maven maven2 && \
+RUN apt-get -y purge maven && \
     apt-get update && \
     apt-get -y install maven && \
     mvn --version && \
