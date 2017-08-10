@@ -23,6 +23,10 @@ RUN dpkg --add-architecture i386 && \
 RUN cd /opt && wget -q https://dl.google.com/android/repository/tools_r25.2.4-linux.zip -O android-sdk-tools.zip && \
     unzip -q android-sdk-tools.zip && mkdir -p ${ANDROID_HOME} && mv tools/ ${ANDROID_HOME}/tools/ && \
     rm -f android-sdk-tools.zip
+    
+# ndk-bundle
+RUN cd /opt/android-sdk-linux/ && wget -q https://dl.google.com/android/repository/android-ndk-r15c-linux-x86_64.zip -O ndk-bundle.zip && \
+    unzip -q ndk-bundle.zip && mv android-ndk-r15c ndk-bundle && chown -R jenkins:jenkins ndk-bundle/
 
 ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
 
