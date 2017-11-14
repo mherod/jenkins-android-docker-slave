@@ -45,6 +45,8 @@ RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter platfor
 
 # SDKs
 # Please keep these in descending order!
+RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter android-27
+RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter android-26
 RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter android-25
 RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter android-24
 RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter android-23
@@ -53,6 +55,10 @@ RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter android
 
 # build tools
 # Please keep these in descending order!
+RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-27.0.1
+RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-27.0.0
+RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-26.0.2
+RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-26.0.1
 RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-25.0.3
 RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-25.0.2
 RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-25.0.1
