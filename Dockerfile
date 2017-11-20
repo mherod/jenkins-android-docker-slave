@@ -6,17 +6,12 @@ ENV ANDROID_HOME /opt/android-sdk-linux
 # ------------------------------------------------------
 # --- Install required tools
 USER root
-#RUN apt-get update -y
-
-# Base (non android specific) tools
-# -> should be added to bitriseio/docker-bitrise-base
 
 # Dependencies to execute Android builds
 RUN dpkg --add-architecture i386 && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y openjdk-8-jdk libc6:i386 libstdc++6:i386 libgcc1:i386 libncurses5:i386 libz1:i386 || apt-get install -f && \
     rm -rf /var/lib/apt/lists/*
-
 
 # ------------------------------------------------------
 # --- Download Android SDK tools into $ANDROID_HOME
@@ -30,72 +25,56 @@ RUN cd /opt/android-sdk-linux/ && wget -q https://dl.google.com/android/reposito
 
 ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools
 
-# ------------------------------------------------------
-# --- Install Android SDKs and other build packages
 
-# Other tools and resources of Android SDK
-#  you should only install the packages you need!
-# To get a full list of available options you can use:
-#  android list sdk --no-ui --all --extended
-# (!!!) Only install one package at a time, as "echo y" will only work for one license!
-#       If you don't do it this way you might get "Unknown response" in the logs,
-#         but the android SDK tool **won't** fail, it'll just **NOT** install the package.
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter platform-tools
+# Accept licenses before installing components, no need to echo y for each component
+# License is valid for all the standard components in versions installed from this file
+# Non-standard components: MIPS system images, preview versions, GDK (Google Glass) and Android Google TV require separate licenses, not accepted there
+RUN yes | sdkmanager --licenses
 
+# Platform tools
+RUN sdkmanager "platform-tools"
 
-# SDKs
-# Please keep these in descending order!
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter android-27
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter android-26
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter android-25
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter android-24
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter android-23
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter android-22
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter android-21
+# Emulator
+# RUN sdkmanager "emulator"
+# For now we'll keep using 26.1.2 ; 26.1.3 had some booting issues...
+RUN cd /opt \
+ && wget https://dl.google.com/android/repository/emulator-linux-4077558.zip -O emulator.zip \
+ && unzip -q emulator.zip -d ${ANDROID_HOME} \
+ && rm emulator.zip
 
-# build tools
-# Please keep these in descending order!
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-27.0.1
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-27.0.0
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-26.0.2
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-26.0.1
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-25.0.3
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-25.0.2
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-25.0.1
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-25.0.0
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-24.0.3
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-24.0.2
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-24.0.1
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-24.0.0
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-23.0.3
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-23.0.2
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-23.0.1
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-22.0.1
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter build-tools-21.1.2
-
-
-# Android System Images, for emulators
-# Please keep these in descending order!
-RUN yes | ${ANDROID_HOME}/tools/bin/sdkmanager \
-          "system-images;android-24;default;armeabi-v7a" \
-          "system-images;android-21;default;armeabi-v7a"
-#RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter sys-img-armeabi-v7a-android-24
-#RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter sys-img-armeabi-v7a-android-21
-
-# Extras
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter extra-android-m2repository
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter extra-google-m2repository
-RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter extra-google-google_play_services
-
-# google apis
-# Please keep these in descending order!
-RUN yes | sdkmanager "add-ons;addon-google_apis-google-23"
-RUN yes | sdkmanager "add-ons;addon-google_apis-google-22"
-RUN yes | sdkmanager "add-ons;addon-google_apis-google-21"
-#RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter addon-google_apis-google-23
-#RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter addon-google_apis-google-22
-#RUN echo y | android update sdk --use-sdk-wrapper --no-ui --all --filter addon-google_apis-google-21
-
+# Please keep all sections in descending order!
+RUN yes | sdkmanager \
+    "platforms;android-27" \
+    "platforms;android-26" \
+    "platforms;android-25" \
+    "platforms;android-24" \
+    "platforms;android-23" \
+    "platforms;android-22" \
+    "platforms;android-21" \
+    "build-tools;27.0.1" \
+    "build-tools;27.0.0" \
+    "build-tools;26.0.2" \
+    "build-tools;26.0.1" \
+    "build-tools;25.0.3" \
+    "build-tools;24.0.3" \
+    "build-tools;23.0.3" \
+    "build-tools;22.0.1" \
+    "build-tools;21.1.2" \
+    "build-tools;19.1.0" \
+    "build-tools;17.0.0" \
+    "system-images;android-25;google_apis;armeabi-v7a" \
+    "system-images;android-24;default;armeabi-v7a" \
+    "system-images;android-22;default;armeabi-v7a" \
+    "system-images;android-21;default;armeabi-v7a" \
+    "system-images;android-19;default;armeabi-v7a" \
+    "extras;android;m2repository" \
+    "extras;google;m2repository" \
+    "extras;google;google_play_services" \
+    "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" \
+    "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.1" \
+    "add-ons;addon-google_apis-google-23" \
+    "add-ons;addon-google_apis-google-22" \
+    "add-ons;addon-google_apis-google-21"
 
 # ------------------------------------------------------
 # --- Install Gradle from PPA
@@ -120,25 +99,10 @@ RUN apt-get -y purge maven && \
 #RUN gem install fastlane --no-document
 #RUN fastlane --version
 
-# copied from https://github.com/GoogleCloudPlatform/continuous-deployment-on-kubernetes
-ENV CLOUDSDK_CORE_DISABLE_PROMPTS 1
-ENV PATH /opt/google-cloud-sdk/bin:$PATH
-#USER root
-RUN apt-get update -y && \
-    apt-get install -y jq && \
-    curl https://sdk.cloud.google.com | bash && mv google-cloud-sdk /opt && \
-    gcloud components install kubectl && \
-    rm -rf /var/lib/apt/lists/*
-
-# added by Ackee
-RUN curl https://get.docker.com | bash
-
 # fix HOME root env variables for android emulator plugin...
-WORKDIR /root
-ENV HOME /root
-RUN usermod -d /root jenkins && chown -R jenkins:root /root && \
-    chown -R jenkins:jenkins $ANDROID_HOME && chmod -R g+w $ANDROID_HOME
+#WORKDIR /root
+#ENV HOME /root
+#RUN usermod -d /root jenkins && chown -R jenkins:root /root && \
+#    chown -R jenkins:jenkins $ANDROID_HOME && chmod -R g+w $ANDROID_HOME
 
-ENV BITRISE_DOCKER_REV_NUMBER_ANDROID v2016_10_20_1
 CMD bitrise -version
-#RUN echo y | ${ANDROID_HOME}/tools/bin/sdkmanager --update | grep done
