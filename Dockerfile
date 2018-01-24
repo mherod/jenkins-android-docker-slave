@@ -43,27 +43,11 @@ RUN cd /opt \
  && rm emulator.zip
 
 # Please keep all sections in descending order!
-RUN yes | sdkmanager \
-    "platforms;android-27" \
-    "platforms;android-26" \
-    "platforms;android-25" \
-    "platforms;android-24" \
-    "platforms;android-23" \
-    "platforms;android-22" \
-    "platforms;android-21" \
-    "build-tools;27.0.3" \
-    "build-tools;27.0.1" \
-    "build-tools;27.0.0" \
-    "build-tools;26.0.2" \
-    "build-tools;26.0.1" \
-    "build-tools;25.0.3" \
-    "build-tools;24.0.3" \
-    "build-tools;23.0.3" \
-    "build-tools;22.0.1" \
-    "build-tools;21.1.2" \
-    "build-tools;19.1.0" \
-    "build-tools;17.0.0" \
-    "system-images;android-25;google_apis;armeabi-v7a" \
+# list all platforms, sort them in descending order and install them
+RUN yes | sdkmanager $( sdkmanager  --list 2>/dev/null| grep platforms | awk -F' ' '{print $1}' | sort -nr -k2 -t- )
+# list all build-tools, sort them in descending order and install them
+RUN yes | sdkmanager $( sdkmanager  --list 2>/dev/null| grep build-tools | awk -F' ' '{print $1}' | sort -nr -k2 -t\; | uniq )
+RUN yes | sdkmanager    "system-images;android-25;google_apis;armeabi-v7a" \
     "system-images;android-24;default;armeabi-v7a" \
     "system-images;android-22;default;armeabi-v7a" \
     "system-images;android-21;default;armeabi-v7a" \
@@ -76,6 +60,8 @@ RUN yes | sdkmanager \
     "add-ons;addon-google_apis-google-23" \
     "add-ons;addon-google_apis-google-22" \
     "add-ons;addon-google_apis-google-21"
+
+
 
 # ------------------------------------------------------
 # --- Install Gradle from PPA
