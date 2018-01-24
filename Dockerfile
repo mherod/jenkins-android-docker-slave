@@ -51,6 +51,7 @@ RUN yes | sdkmanager \
     "platforms;android-23" \
     "platforms;android-22" \
     "platforms;android-21" \
+    "build-tools;27.0.3" \
     "build-tools;27.0.1" \
     "build-tools;27.0.0" \
     "build-tools;26.0.2" \
