@@ -43,8 +43,8 @@ RUN cd /opt \
  && rm emulator.zip
 
 # Please keep all sections in descending order!
-# list all platforms, sort them in descending order and install them
-RUN yes | sdkmanager $( sdkmanager  --list 2>/dev/null| grep platforms | awk -F' ' '{print $1}' | sort -nr -k2 -t- )
+# list all platforms, sort them in descending order, take the newest 8 versions and install them
+RUN yes | sdkmanager $( sdkmanager  --list 2>/dev/null| grep platforms | awk -F' ' '{print $1}' | sort -nr -k2 -t- | head -8 )
 # list all build-tools, sort them in descending order and install them
 RUN yes | sdkmanager $( sdkmanager  --list 2>/dev/null| grep build-tools | awk -F' ' '{print $1}' | sort -nr -k2 -t\; | uniq )
 RUN yes | sdkmanager    "system-images;android-25;google_apis;armeabi-v7a" \
