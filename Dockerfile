@@ -47,12 +47,7 @@ RUN cd /opt \
 RUN yes | sdkmanager $( sdkmanager  --list 2>/dev/null| grep platforms | awk -F' ' '{print $1}' | sort -nr -k2 -t- | head -8 )
 # list all build-tools, sort them in descending order and install them
 RUN yes | sdkmanager $( sdkmanager  --list 2>/dev/null| grep build-tools | awk -F' ' '{print $1}' | sort -nr -k2 -t\; | uniq )
-RUN yes | sdkmanager    "system-images;android-25;google_apis;armeabi-v7a" \
-    "system-images;android-24;default;armeabi-v7a" \
-    "system-images;android-22;default;armeabi-v7a" \
-    "system-images;android-21;default;armeabi-v7a" \
-    "system-images;android-19;default;armeabi-v7a" \
-    "extras;android;m2repository" \
+RUN yes | sdkmanager "extras;android;m2repository" \
     "extras;google;m2repository" \
     "extras;google;google_play_services" \
     "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" \
@@ -60,8 +55,6 @@ RUN yes | sdkmanager    "system-images;android-25;google_apis;armeabi-v7a" \
     "add-ons;addon-google_apis-google-23" \
     "add-ons;addon-google_apis-google-22" \
     "add-ons;addon-google_apis-google-21"
-
-
 
 # ------------------------------------------------------
 # --- Install Gradle from PPA
